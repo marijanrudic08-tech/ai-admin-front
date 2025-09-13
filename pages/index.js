@@ -97,3 +97,13 @@ export default function Home() {
     </div>
   );
 }
+import Chat from "../components/Chat";
+
+export default function Home() {
+  return (
+    <div>
+      <h1>AI Admin</h1>
+      <Chat />
+    </div>
+  );
+}
