@@ -97,6 +97,7 @@ export default function Home() {
     </div>
   );
 }
+
 import Chat from "../components/Chat";
 
 export default function Home() {
