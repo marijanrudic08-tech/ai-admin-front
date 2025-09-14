@@ -5,23 +5,22 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const sendMessage = async () => {
     if (!input.trim()) return;
 
     const userMessage = { role: "user", content: input };
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/chat`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: input }),
-        }
-      );
+      const res = await fetch(`${API_URL}/api/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
 
       const data = await res.json();
       const botMessage = { role: "assistant", content: data.reply };
@@ -44,67 +43,85 @@ export default function Home() {
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "50px auto", fontFamily: "Arial" }}>
-      <h1>AI Admin Chat</h1>
+    <div style={{ maxWidth: "700px", margin: "auto", padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>💬 AI Admin Chat</h1>
+
       <div
         style={{
           border: "1px solid #ddd",
-          borderRadius: "8px",
-          padding: "10px",
-          height: "400px",
+          borderRadius: "12px",
+          padding: "15px",
+          minHeight: "400px",
+          marginBottom: "15px",
+          backgroundColor: "#f9f9f9",
           overflowY: "auto",
-          marginBottom: "10px",
-          backgroundColor: "#fafafa",
         }}
       >
-        {messages.map((msg, index) => (
+        {messages.map((msg, idx) => (
           <div
-            key={index}
+            key={idx}
             style={{
+              display: "flex",
+              justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
               margin: "8px 0",
-              textAlign: msg.role === "user" ? "right" : "left",
             }}
           >
-            <span
+            <div
               style={{
-                display: "inline-block",
-                padding: "8px 12px",
-                borderRadius: "12px",
-                background: msg.role === "user" ? "#0070f3" : "#eaeaea",
+                padding: "10px 15px",
+                borderRadius: "18px",
+                maxWidth: "70%",
+                backgroundColor: msg.role === "user" ? "#007bff" : "#e5e5ea",
                 color: msg.role === "user" ? "#fff" : "#000",
               }}
             >
               {msg.content}
-            </span>
+            </div>
           </div>
         ))}
-        {loading && <p>⏳ Loading...</p>}
+        {loading && <p>⌛ AI razmišlja...</p>}
       </div>
 
-      <div style={{ display: "flex", gap: "8px" }}>
+      <div style={{ display: "flex", gap: "10px" }}>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Napiši poruku..."
-          style={{ flex: 1, padding: "8px" }}
+          style={{
+            flex: 1,
+            padding: "12px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+          }}
         />
-        <button onClick={sendMessage} disabled={loading}>
+        <button
+          onClick={sendMessage}
+          style={{
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "12px 18px",
+            cursor: "pointer",
+          }}
+        >
           Pošalji
         </button>
-        <button onClick={clearChat}>Obriši</button>
+        <button
+          onClick={clearChat}
+          style={{
+            backgroundColor: "#dc3545",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "12px 18px",
+            cursor: "pointer",
+          }}
+        >
+          Obriši
+        </button>
       </div>
-    </div>
-  );
-}
-
-import Chat from "../components/Chat";
-
-export default function Home() {
-  return (
-    <div>
-      <h1>AI Admin</h1>
-      <Chat />
     </div>
   );
 }
